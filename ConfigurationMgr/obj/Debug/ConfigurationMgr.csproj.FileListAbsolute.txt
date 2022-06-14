@@ -1,0 +1,6 @@
+D:\Sources\CarManager\ConfigurationMgr\bin\Debug\ConfigurationMgr.dll
+D:\Sources\CarManager\ConfigurationMgr\bin\Debug\ConfigurationMgr.pdb
+D:\Sources\CarManager\ConfigurationMgr\obj\Debug\ConfigurationMgr.csproj.AssemblyReference.cache
+D:\Sources\CarManager\ConfigurationMgr\obj\Debug\ConfigurationMgr.csproj.CoreCompileInputs.cache
+D:\Sources\CarManager\ConfigurationMgr\obj\Debug\ConfigurationMgr.dll
+D:\Sources\CarManager\ConfigurationMgr\obj\Debug\ConfigurationMgr.pdb

@@ -1,0 +1,6 @@
+D:\Sources\CarManager\AdoNetDB\bin\Debug\AdoNetDB.dll
+D:\Sources\CarManager\AdoNetDB\bin\Debug\AdoNetDB.pdb
+D:\Sources\CarManager\AdoNetDB\obj\Debug\AdoNetDB.csproj.CoreCompileInputs.cache
+D:\Sources\CarManager\AdoNetDB\obj\Debug\AdoNetDB.dll
+D:\Sources\CarManager\AdoNetDB\obj\Debug\AdoNetDB.pdb
+D:\Sources\CarManager\AdoNetDB\obj\Debug\AdoNetDB.csproj.AssemblyReference.cache

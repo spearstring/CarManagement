@@ -2,21 +2,36 @@
 using System.Data;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Configuration;
+using AppConfiguration;
+using Model;
 
 namespace mook_CarInfo
 {
-    public partial class Form1 : Form
+    // 자식 Form에서는 반드시 ApplicationRootForm을 상속 받아서 사용해야 함
+    // => 결과적으로 프로그램 전체에서 SqlConnection이 하나로 사용되게 됨
+    // => 서버의 공유성(서버의 성능을 낮추지 않음)을 높이고, 프로그램의 재사용(유지보수성 좋아짐) 측면을 모두 고려한 내용
+
+    public partial class Form1 : ApplicationRootForm
     {
+        private SqlConnection Conn;
+
+        private string connectionStr = "Server=(local);database=ADOTest;" +
+                "Integrated Security=true";
+
         public Form1()
         {
             InitializeComponent();
         }
 
-        private string connectionStr = "Server=(local);database=ADOTest;" +
-                "Integrated Security=true";
-
         private void Form1_Load(object sender, EventArgs e)
         {
+            configurationMgr = ConfigurationMgr.Instance();
+            Conn = (SqlConnection)configurationMgr.Connection;
+            Conn.Close();
+
+            //MessageBox.Show(configurationMgr.Connection.State.ToString());
+
             listView_initialize();
         }
 
@@ -33,11 +48,16 @@ namespace mook_CarInfo
                 var myRead = Comm.ExecuteReader(CommandBehavior.CloseConnection);
                 while (myRead.Read())
                 {
-                    var strArray = new String[] { myRead["id"].ToString(),
-                    myRead["carName"].ToString(), myRead["carYear"].ToString(),
-                    myRead["carPrice"].ToString(), myRead["carDoor"].ToString() };
+                    //var strArray = new String[] { myRead["id"].ToString(),
+                    //myRead["carName"].ToString(), myRead["carYear"].ToString(),
+                    //myRead["carPrice"].ToString(), myRead["carDoor"].ToString() };
 
-                    var lvt = new ListViewItem(strArray);
+                    // SQL과 View를 분리하기 위한 진행 과정
+                    // 최종적으로 listView_initialize()에서 SQL이 없어짐
+                    // 없어지는 SQL은 리포지토리로 이동하게 됨
+                    // => SQL과 View가 분리 됨 => 비즈니스 로직, SQL 등이 완전 분리하게 됨
+                    // => 유지 보수성이 높아짐 테스트가 편해지고, 품질이 높아지게 됨
+                    var lvt = new ListViewItem(GetCarInfoModel(myRead).ToStringList());
                     this.lvList.Items.Add(lvt);
                 }
                 myRead.Close();
@@ -50,6 +70,19 @@ namespace mook_CarInfo
                 Application.Exit();
             }
             
+        }
+
+        private CarInfoModel GetCarInfoModel(SqlDataReader myRead)
+        {
+            CarInfoModel model = new CarInfoModel();
+
+            model.id = myRead["id"].ToString();
+            model.carName = myRead["carName"].ToString();
+            model.carYear = myRead["carYear"].ToString();
+            model.carPrice = myRead["carPrice"].ToString();
+            model.carDoor = myRead["carDoor"].ToString();
+
+            return model;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
