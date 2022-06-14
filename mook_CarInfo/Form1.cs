@@ -5,6 +5,8 @@ using System.Data.SqlClient;
 using System.Configuration;
 using AppConfiguration;
 using Model;
+using Repositiories;
+using System.Collections;
 
 namespace mook_CarInfo
 {
@@ -38,29 +40,44 @@ namespace mook_CarInfo
         private void listView_initialize()
         {
             this.lvList.Items.Clear();
-            var Conn = new SqlConnection(connectionStr);
+            //var Conn = new SqlConnection(connectionStr);
+
+            // SqlConnection 사용하지 않도록 주석처리 => 화면, DB 분리 => SQL, DB 접속 정보를 리포지토리로 이동
+            // SQL 문장 실행할 이유가 없음 => 리포지토리로 이동
+            // => 결과적으로 남은 것은 화면관련 부분만 남게 됨
+            // 남은 화면에 보여줄 데이터는 CarInffoRepositoty()의 GetAllCarInfo()를 이용해서 조회함
+            // GetAllCarInfo() 조회된 결과는 Collection으로 반화되고, 이를 리스트뷰에 출력하게 됨
 
             try
             {
-                Conn.Open();
+                ICarInfoRepository carInfoRepository = new CarInfoRepository();
+                ArrayList list = carInfoRepository.GetAllCarInfo();
 
-                var Comm = new SqlCommand("Select * From TB_CAR_INFO", Conn);
-                var myRead = Comm.ExecuteReader(CommandBehavior.CloseConnection);
-                while (myRead.Read())
+                foreach (string[] listitem in list)
                 {
-                    //var strArray = new String[] { myRead["id"].ToString(),
-                    //myRead["carName"].ToString(), myRead["carYear"].ToString(),
-                    //myRead["carPrice"].ToString(), myRead["carDoor"].ToString() };
-
-                    // SQL과 View를 분리하기 위한 진행 과정
-                    // 최종적으로 listView_initialize()에서 SQL이 없어짐
-                    // 없어지는 SQL은 리포지토리로 이동하게 됨
-                    // => SQL과 View가 분리 됨 => 비즈니스 로직, SQL 등이 완전 분리하게 됨
-                    // => 유지 보수성이 높아짐 테스트가 편해지고, 품질이 높아지게 됨
-                    var lvt = new ListViewItem(GetCarInfoModel(myRead).ToStringList());
-                    this.lvList.Items.Add(lvt);
+                    this.lvList.Items.Add(new ListViewItem(listitem));
                 }
-                myRead.Close();
+
+
+                //Conn.Open();
+
+                //var Comm = new SqlCommand("Select * From TB_CAR_INFO", Conn);
+                //var myRead = Comm.ExecuteReader(CommandBehavior.CloseConnection);
+                //while (myRead.Read())
+                //{
+                //    //var strArray = new String[] { myRead["id"].ToString(),
+                //    //myRead["carName"].ToString(), myRead["carYear"].ToString(),
+                //    //myRead["carPrice"].ToString(), myRead["carDoor"].ToString() };
+
+                //    // SQL과 View를 분리하기 위한 진행 과정
+                //    // 최종적으로 listView_initialize()에서 SQL이 없어짐
+                //    // 없어지는 SQL은 리포지토리로 이동하게 됨
+                //    // => SQL과 View가 분리 됨 => 비즈니스 로직, SQL 등이 완전 분리하게 됨
+                //    // => 유지 보수성이 높아짐 테스트가 편해지고, 품질이 높아지게 됨
+                //    var lvt = new ListViewItem(GetCarInfoModel(myRead).ToStringList());
+                //    this.lvList.Items.Add(lvt);
+                //}
+                //myRead.Close();
                 //Conn.Close();
             }
             catch (Exception ex)
@@ -96,28 +113,43 @@ namespace mook_CarInfo
 
             try
             {
-                Conn.Open();
+                // 신규 데이터 등록을 위해 Model 객체 생성
+                CarInfoModel carInfoModel = new CarInfoModel();
 
-                string Sql = "insert into TB_CAR_INFO(carName, carYear, carPrice, carDoor) "
-                                + "values( @carName, @carYear, @carPrice, @carDoor )";
-                var Comm = new SqlCommand(Sql, Conn);
-                Comm.Parameters.Add("@carName", SqlDbType.NVarChar, 30);
-                Comm.Parameters.Add("@carYear", SqlDbType.VarChar, 4);
-                Comm.Parameters.Add("@carPrice", SqlDbType.Int);
-                Comm.Parameters.Add("@carDoor", SqlDbType.Int);
+                // 화면의 입력된 데이터를 Model에 저장
+                carInfoModel.carName = this.txtName.Text;
+                carInfoModel.carYear = this.txtYear.Text;
+                carInfoModel.carPrice = this.txtPrice.Text;
+                carInfoModel.carDoor = this.txtDoor.Text;
 
-                Comm.Parameters["@carName"].Value = this.txtName.Text;
-                Comm.Parameters["@carYear"].Value = this.txtYear.Text;
-                Comm.Parameters["@carPrice"].Value = Convert.ToInt32(this.txtPrice.Text);
-                Comm.Parameters["@carDoor"].Value = Convert.ToInt32(this.txtDoor.Text);
+                // 리포지토리 객체를 생성 후 등록 메서드에 Model 전달
+                ICarInfoRepository carInfoRepository = new CarInfoRepository();
 
-                /*string Sql = "insert into TB_CAR_INFO(carName, carYear, carPrice, carDoor) values('";
-                Sql += this.txtName.Text + "'," + this.txtYear.Text + "," +
-                    Convert.ToInt32(this.txtPrice.Text) + "," + Convert.ToInt32(this.txtDoor.Text) + ")";
-                var Comm = new SqlCommand(Sql, Conn);*/
+                // 테이블에 Insert 된 row 수 반환
+                int i  = carInfoRepository.Add(carInfoModel);
 
-                int i = Comm.ExecuteNonQuery();
-                Conn.Close();
+                //Conn.Open();
+
+                //string Sql = "insert into TB_CAR_INFO(carName, carYear, carPrice, carDoor) "
+                //                + "values( @carName, @carYear, @carPrice, @carDoor )";
+                //var Comm = new SqlCommand(Sql, Conn);
+                //Comm.Parameters.Add("@carName", SqlDbType.NVarChar, 30);
+                //Comm.Parameters.Add("@carYear", SqlDbType.VarChar, 4);
+                //Comm.Parameters.Add("@carPrice", SqlDbType.Int);
+                //Comm.Parameters.Add("@carDoor", SqlDbType.Int);
+
+                //Comm.Parameters["@carName"].Value = this.txtName.Text;
+                //Comm.Parameters["@carYear"].Value = this.txtYear.Text;
+                //Comm.Parameters["@carPrice"].Value = Convert.ToInt32(this.txtPrice.Text);
+                //Comm.Parameters["@carDoor"].Value = Convert.ToInt32(this.txtDoor.Text);
+
+                ///*string Sql = "insert into TB_CAR_INFO(carName, carYear, carPrice, carDoor) values('";
+                //Sql += this.txtName.Text + "'," + this.txtYear.Text + "," +
+                //    Convert.ToInt32(this.txtPrice.Text) + "," + Convert.ToInt32(this.txtDoor.Text) + ")";
+                //var Comm = new SqlCommand(Sql, Conn);*/
+
+                //int i = Comm.ExecuteNonQuery();
+                //Conn.Close();
                 if (i == 1)
                 {
                     MessageBox.Show("정상적으로 데이터가 저장되었습니다.", "알림",
@@ -178,30 +210,46 @@ namespace mook_CarInfo
             var Conn = new SqlConnection(connectionStr);
 
             try {
-                Conn.Open();
+                // 데이터 수정을 위해 Model 객체 생성
+                CarInfoModel carInfoModel = new CarInfoModel();
 
-                string Sql = "update TB_CAR_INFO "
-                        + "set carName = @carName, carYear = @carYear, "
-                        + "carPrice = @carPrice, carDoor = @carDoor "
-                        + "where id = @id ";
+                // 수정이기 때문에 PK 값(id)이 반드시 있어야 함
+                carInfoModel.id = this.lvList.SelectedItems[0].SubItems[0].Text;
+                carInfoModel.carName = this.txtName.Text;
+                carInfoModel.carYear = this.txtYear.Text;
+                carInfoModel.carPrice = this.txtPrice.Text;
+                carInfoModel.carDoor = this.txtDoor.Text;
 
-                var Comm = new SqlCommand(Sql, Conn);
-                Comm.Parameters.Add("@id", SqlDbType.Int);
-                Comm.Parameters.Add("@carName", SqlDbType.NVarChar, 30);
-                Comm.Parameters.Add("@carYear", SqlDbType.VarChar, 4);
-                Comm.Parameters.Add("@carPrice", SqlDbType.Int);
-                Comm.Parameters.Add("@carDoor", SqlDbType.Int);
+                // 리포지토리 객체를 생성 후 수정 메서드에 Model 전달
+                ICarInfoRepository carInfoRepository = new CarInfoRepository();
 
-                Comm.Parameters["@id"].Value =
-                    Convert.ToInt32(this.lvList.SelectedItems[0].SubItems[0].Text);
-                Comm.Parameters["@carName"].Value = this.txtName.Text;
-                Comm.Parameters["@carYear"].Value = this.txtYear.Text;
-                Comm.Parameters["@carPrice"].Value = Convert.ToInt32(this.txtPrice.Text);
-                Comm.Parameters["@carDoor"].Value = Convert.ToInt32(this.txtDoor.Text);
+                // 테이블에 Update 된 row 수 반환
+                int i = carInfoRepository.Update(carInfoModel);
 
-                int i = Comm.ExecuteNonQuery();
+                //Conn.Open();
 
-                Conn.Close();
+                //string Sql = "update TB_CAR_INFO "
+                //        + "set carName = @carName, carYear = @carYear, "
+                //        + "carPrice = @carPrice, carDoor = @carDoor "
+                //        + "where id = @id ";
+
+                //var Comm = new SqlCommand(Sql, Conn);
+                //Comm.Parameters.Add("@id", SqlDbType.Int);
+                //Comm.Parameters.Add("@carName", SqlDbType.NVarChar, 30);
+                //Comm.Parameters.Add("@carYear", SqlDbType.VarChar, 4);
+                //Comm.Parameters.Add("@carPrice", SqlDbType.Int);
+                //Comm.Parameters.Add("@carDoor", SqlDbType.Int);
+
+                //Comm.Parameters["@id"].Value =
+                //    Convert.ToInt32(this.lvList.SelectedItems[0].SubItems[0].Text);
+                //Comm.Parameters["@carName"].Value = this.txtName.Text;
+                //Comm.Parameters["@carYear"].Value = this.txtYear.Text;
+                //Comm.Parameters["@carPrice"].Value = Convert.ToInt32(this.txtPrice.Text);
+                //Comm.Parameters["@carDoor"].Value = Convert.ToInt32(this.txtDoor.Text);
+
+                //int i = Comm.ExecuteNonQuery();
+
+                //Conn.Close();
                 if (i == 1)
                 {
                     MessageBox.Show("정상적으로 데이터가 수정되었습니다.", "알림",
@@ -228,46 +276,65 @@ namespace mook_CarInfo
             var Conn = new SqlConnection(connectionStr);
 
             try {
-                Conn.Open();
+                // 조건 검색을 위해 Model 객체 생성
+                CarInfoModel carInfoModel = new CarInfoModel();
 
-                string Sql = "Select * From TB_CAR_INFO "
-                            + "where carName = @carName or carYear = @carYear "
-                            + "or carPrice = @carPrice or carDoor = @carDoor ";
+                // 화면의 입력된 데이터를 Model에 저장
+                carInfoModel.carName = this.txtName.Text;
+                carInfoModel.carYear = this.txtYear.Text;
+                carInfoModel.carPrice = this.txtPrice.Text;
+                carInfoModel.carDoor = this.txtDoor.Text;
 
-                var Comm = new SqlCommand(Sql, Conn);
+                // 리포지토리 객체를 생성 후 조건 검색 메서드에 Model 전달
+                ICarInfoRepository carInfoRepository = new CarInfoRepository();
+                ArrayList list = carInfoRepository.GetCarInfoByCondition(carInfoModel);
 
-                Comm.Parameters.Add("@carName", SqlDbType.NVarChar, 30);
-                Comm.Parameters.Add("@carYear", SqlDbType.VarChar, 4);
-                Comm.Parameters.Add("@carPrice", SqlDbType.Int);
-                Comm.Parameters.Add("@carDoor", SqlDbType.Int);
-
-                Comm.Parameters["@carName"].Value = this.txtName.Text;
-                Comm.Parameters["@carYear"].Value = this.txtYear.Text;
-                Comm.Parameters["@carPrice"].Value =
-                    Convert.ToInt32((this.txtPrice.Text == "") ? 0 : Convert.ToInt32(this.txtPrice.Text));
-                Comm.Parameters["@carDoor"].Value =
-                    Convert.ToInt32((this.txtDoor.Text == "") ? 0 : Convert.ToInt32(this.txtDoor.Text));
-
-
-                /*var Comm = new SqlCommand("Select * From TB_CAR_INFO where carName = '" + this.txtName.Text + 
-                    "' or carYear = '" + this.txtYear.Text + 
-                    "' or carPrice = "
-                    + Convert.ToInt32((this.txtPrice.Text == "") ? 0 : Convert.ToInt32(this.txtPrice.Text)) + 
-                    " or carDoor = "
-                    + Convert.ToInt32((this.txtDoor.Text == "") ? 0 : Convert.ToInt32(this.txtDoor.Text)), Conn);*/
-
-                //var myRead = Comm.ExecuteReader();
-                var myRead = Comm.ExecuteReader(CommandBehavior.CloseConnection);
-
-                while (myRead.Read())
+                foreach (string[] listItem in list)
                 {
-                    var strArray = new String[] { myRead["id"].ToString(),
-                    myRead["carName"].ToString(), myRead["carYear"].ToString(),
-                    myRead["carPrice"].ToString(), myRead["carDoor"].ToString() };
-                    var lvt = new ListViewItem(strArray);
-                    this.lvList.Items.Add(lvt);
+                    this.lvList.Items.Add(new ListViewItem(listItem));
                 }
-                myRead.Close();
+
+
+                //Conn.Open();
+
+                //string Sql = "Select * From TB_CAR_INFO "
+                //            + "where carName = @carName or carYear = @carYear "
+                //            + "or carPrice = @carPrice or carDoor = @carDoor ";
+
+                //var Comm = new SqlCommand(Sql, Conn);
+
+                //Comm.Parameters.Add("@carName", SqlDbType.NVarChar, 30);
+                //Comm.Parameters.Add("@carYear", SqlDbType.VarChar, 4);
+                //Comm.Parameters.Add("@carPrice", SqlDbType.Int);
+                //Comm.Parameters.Add("@carDoor", SqlDbType.Int);
+
+                //Comm.Parameters["@carName"].Value = this.txtName.Text;
+                //Comm.Parameters["@carYear"].Value = this.txtYear.Text;
+                //Comm.Parameters["@carPrice"].Value =
+                //    Convert.ToInt32((this.txtPrice.Text == "") ? 0 : Convert.ToInt32(this.txtPrice.Text));
+                //Comm.Parameters["@carDoor"].Value =
+                //    Convert.ToInt32((this.txtDoor.Text == "") ? 0 : Convert.ToInt32(this.txtDoor.Text));
+
+
+                ///*var Comm = new SqlCommand("Select * From TB_CAR_INFO where carName = '" + this.txtName.Text + 
+                //    "' or carYear = '" + this.txtYear.Text + 
+                //    "' or carPrice = "
+                //    + Convert.ToInt32((this.txtPrice.Text == "") ? 0 : Convert.ToInt32(this.txtPrice.Text)) + 
+                //    " or carDoor = "
+                //    + Convert.ToInt32((this.txtDoor.Text == "") ? 0 : Convert.ToInt32(this.txtDoor.Text)), Conn);*/
+
+                ////var myRead = Comm.ExecuteReader();
+                //var myRead = Comm.ExecuteReader(CommandBehavior.CloseConnection);
+
+                //while (myRead.Read())
+                //{
+                //    var strArray = new String[] { myRead["id"].ToString(),
+                //    myRead["carName"].ToString(), myRead["carYear"].ToString(),
+                //    myRead["carPrice"].ToString(), myRead["carDoor"].ToString() };
+                //    var lvt = new ListViewItem(strArray);
+                //    this.lvList.Items.Add(lvt);
+                //}
+                //myRead.Close();
                 //Conn.Close();
             }
             catch (Exception ex)
@@ -284,25 +351,31 @@ namespace mook_CarInfo
                 DialogResult dlr = MessageBox.Show("데이터를 삭제할까요?", "알림", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dlr == DialogResult.Yes)
                 {
-                    var Conn = new SqlConnection(connectionStr);
+                    //var Conn = new SqlConnection(connectionStr);
 
                     try {
-                        Conn.Open();
+                        // 삭제할 차량정보의 id 값(PK)
+                        int carNo = Convert.ToInt32(this.lvList.SelectedItems[0].SubItems[0].Text);
 
-                        string Sql = "delete from TB_CAR_INFO "
-                            + "where id = @id ";
+                        ICarInfoRepository carInfoRepository = new CarInfoRepository();
+                        int i = carInfoRepository.Delete(carNo);
 
-                        var Comm = new SqlCommand(Sql, Conn);
+                        //Conn.Open();
 
-                        Comm.Parameters.Add("@id", SqlDbType.Int);
+                        //string Sql = "delete from TB_CAR_INFO "
+                        //    + "where id = @id ";
 
-                        Comm.Parameters["@id"].Value =
-                            Convert.ToInt32(this.lvList.SelectedItems[0].SubItems[0].Text);
+                        //var Comm = new SqlCommand(Sql, Conn);
 
-                        /*string Sql = "delete from TB_CAR_INFO where id = " + Convert.ToInt32(this.lvList.SelectedItems[0].SubItems[0].Text) + "";
-                        var Comm = new SqlCommand(Sql, Conn);*/
+                        //Comm.Parameters.Add("@id", SqlDbType.Int);
 
-                        int i = Comm.ExecuteNonQuery();
+                        //Comm.Parameters["@id"].Value =
+                        //    Convert.ToInt32(this.lvList.SelectedItems[0].SubItems[0].Text);
+
+                        ///*string Sql = "delete from TB_CAR_INFO where id = " + Convert.ToInt32(this.lvList.SelectedItems[0].SubItems[0].Text) + "";
+                        //var Comm = new SqlCommand(Sql, Conn);*/
+
+                        //int i = Comm.ExecuteNonQuery();
                         if (i == 1)
                             MessageBox.Show("데이터가 정상적으로 삭제되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         else

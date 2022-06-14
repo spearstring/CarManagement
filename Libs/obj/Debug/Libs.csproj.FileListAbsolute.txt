@@ -1,0 +1,9 @@
+D:\Sources\CarManager\Libs\bin\Debug\Libs.dll
+D:\Sources\CarManager\Libs\bin\Debug\Libs.pdb
+D:\Sources\CarManager\Libs\bin\Debug\ConfigurationMgr.dll
+D:\Sources\CarManager\Libs\bin\Debug\ConfigurationMgr.pdb
+D:\Sources\CarManager\Libs\obj\Debug\Libs.csproj.AssemblyReference.cache
+D:\Sources\CarManager\Libs\obj\Debug\Libs.csproj.CoreCompileInputs.cache
+D:\Sources\CarManager\Libs\obj\Debug\Libs.csproj.CopyComplete
+D:\Sources\CarManager\Libs\obj\Debug\Libs.dll
+D:\Sources\CarManager\Libs\obj\Debug\Libs.pdb

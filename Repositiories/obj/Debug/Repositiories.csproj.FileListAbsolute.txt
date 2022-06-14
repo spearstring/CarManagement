@@ -1,0 +1,13 @@
+D:\Sources\CarManager\Repositiories\bin\Debug\Repositiories.dll
+D:\Sources\CarManager\Repositiories\bin\Debug\Repositiories.pdb
+D:\Sources\CarManager\Repositiories\bin\Debug\ConfigurationMgr.dll
+D:\Sources\CarManager\Repositiories\bin\Debug\Libs.dll
+D:\Sources\CarManager\Repositiories\bin\Debug\Model.dll
+D:\Sources\CarManager\Repositiories\bin\Debug\ConfigurationMgr.pdb
+D:\Sources\CarManager\Repositiories\bin\Debug\Libs.pdb
+D:\Sources\CarManager\Repositiories\bin\Debug\Model.pdb
+D:\Sources\CarManager\Repositiories\obj\Debug\Repositiories.csproj.AssemblyReference.cache
+D:\Sources\CarManager\Repositiories\obj\Debug\Repositiories.csproj.CoreCompileInputs.cache
+D:\Sources\CarManager\Repositiories\obj\Debug\Repositiories.csproj.CopyComplete
+D:\Sources\CarManager\Repositiories\obj\Debug\Repositiories.dll
+D:\Sources\CarManager\Repositiories\obj\Debug\Repositiories.pdb

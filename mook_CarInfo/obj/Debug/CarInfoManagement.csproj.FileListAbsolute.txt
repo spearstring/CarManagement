@@ -28,3 +28,7 @@ D:\Sources\CarManager\mook_CarInfo\bin\Debug\Model.pdb
 D:\Sources\CarManager\mook_CarInfo\obj\Debug\CarInfoManagement.csproj.CopyComplete
 D:\Sources\CarManager\mook_CarInfo\obj\Debug\mook_CarInfo.exe
 D:\Sources\CarManager\mook_CarInfo\obj\Debug\mook_CarInfo.pdb
+D:\Sources\CarManager\mook_CarInfo\bin\Debug\Libs.dll
+D:\Sources\CarManager\mook_CarInfo\bin\Debug\Repositiories.dll
+D:\Sources\CarManager\mook_CarInfo\bin\Debug\Libs.pdb
+D:\Sources\CarManager\mook_CarInfo\bin\Debug\Repositiories.pdb

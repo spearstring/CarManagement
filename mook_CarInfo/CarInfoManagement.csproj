@@ -97,9 +97,17 @@
       <Project>{012a879e-d93e-40c3-a986-cb83726bc79d}</Project>
       <Name>AppConfiguration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Libs\Libs.csproj">
+      <Project>{9cc4fe65-69b0-4c51-9695-e023c571b4e7}</Project>
+      <Name>Libs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Model\Model.csproj">
       <Project>{9B06D5CA-A989-44A2-8357-19BA5E41429E}</Project>
       <Name>Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Repositiories\Repositiories.csproj">
+      <Project>{25e9f754-327c-4778-a029-e6c8b0ad9537}</Project>
+      <Name>Repositiories</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
