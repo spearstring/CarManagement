@@ -2,4 +2,4 @@
 
 <br/>
 
-C# WinForm 리포지토리
+C# WinForm 학습 리포지토리
