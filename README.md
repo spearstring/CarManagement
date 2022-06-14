@@ -15,7 +15,6 @@ C# WinForm 학습 리포지토리
  
  ### 추가 항목
  
- <br/>
  
   1. DB관련
      - 접속
@@ -23,11 +22,7 @@ C# WinForm 학습 리포지토리
      - Connection 객체 생성
        - 하나의 접속 객체만 갖도록 수정 => 싱글톤 패턴 
 
-<br/>
-
   2. Form1의 부모 Form을 생성하여 재상용성을 높이도록 수정 => DBConnection
-
-<br/>
 
   3. SQL(리포지토리), Model, View로 분리
      - SQL (CRUD) => 리포지토리
